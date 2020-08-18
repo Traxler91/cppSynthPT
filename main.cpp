@@ -136,8 +136,9 @@ double Synth(double dTime)
 {
 	double dOutput = envelope.GetAmplitude(dTime) * //osc(dFrequencyOutput, dTime, 3);
 		(
-			+ osc(dFrequencyOutput * 0.5, dTime, 3)
-			+ osc(dFrequencyOutput * 1.0, dTime, 2)
+			+ osc(dFrequencyOutput * 1.0, dTime, 3)
+			+ osc(dFrequencyOutput * 1.0, dTime, 3)
+			+ osc(dFrequencyOutput * 0.5, dTime, 1)
 		);
 
 	return dOutput * 0.2; //Master
