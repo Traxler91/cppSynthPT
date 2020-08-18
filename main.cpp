@@ -10,20 +10,27 @@ double w(double dHertz)
 }
 
 //osciolator for switching waveforms
-double osc(double dHertz, double dTime, int nType)
+#define OSC_SINE 0
+#define OSC_SQUARE 1
+#define OSC_TRIANGLE 2
+#define OSC_SAW_ANA 3
+#define OSC_SAW_DIG 4
+#define OSC_NOISE 5
+
+double osc(double dHertz, double dTime, int nType = OSC_SINE)
 {
 	switch (nType)
 	{
-		case 0:	//sine wave
+		case OSC_SINE:		//sine wave
 			return sin(w(dHertz) * dTime);
 
-		case 1:	//square wave
+		case OSC_SQUARE:	//square wave
 			return sin(w(dHertz) * dTime) > 0.0 ? 1.0 :-1.0;
 
-		case 2:	//triangle wave
+		case OSC_TRIANGLE:	//triangle wave
 			return asin(sin(w(dHertz) * dTime)) * 2.0 / PI;
 
-		case 3: //saw wave (unoptimised)
+		case OSC_SAW_ANA:	//saw wave (unoptimised)
 		{
 			double dOutput = 0.0;
 
@@ -33,10 +40,10 @@ double osc(double dHertz, double dTime, int nType)
 			return dOutput * (2.0 / PI);
 		}
 
-		case 4: //saw wave (optimised)
+		case OSC_SAW_DIG:	//saw wave (optimised)
 			return (2.0 / PI) * (dHertz * PI * fmod(dTime, 1.0 / dHertz) - (PI / 2.0));
 
-		case 5:	//random noise
+		case OSC_NOISE:		//random noise
 			return 2.0 * ((double)rand() / (double)RAND_MAX) - 1.0;
 
 		default:
@@ -136,9 +143,9 @@ double Synth(double dTime)
 {
 	double dOutput = envelope.GetAmplitude(dTime) * //osc(dFrequencyOutput, dTime, 3);
 		(
-			+ osc(dFrequencyOutput * 1.0, dTime, 3)
-			+ osc(dFrequencyOutput * 1.0, dTime, 3)
-			+ osc(dFrequencyOutput * 0.5, dTime, 1)
+			+ osc(dFrequencyOutput * 1.0, dTime, OSC_SAW_ANA)
+			//+ osc(dFrequencyOutput * 1.0, dTime, 3)
+			//+ osc(dFrequencyOutput * 0.5, dTime, 1)
 		);
 
 	return dOutput * 0.2; //Master
